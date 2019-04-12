@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mybatistest.pojo">
+
+    <resultMap id="categoryBean" type="Category">
+        <id column="cid" property="id" />
+        <result column="cname" property="name" />
+
+        <collection property="products" ofType="Product">
+            <id column="pid" property="id" />
+            <result column="pname" property="name" />
+            <result column="price" property="price" />
+        </collection>
+    </resultMap>
+
+    <!--查-->
+    <select id="getCategory" parameterType="_int" resultType="Category">
+        select * from category where id=#{id}
+    </select>
+
+    <select id="listCategory" resultMap="categoryBean">
+        select c.*, p.*, c.id 'cid', p.id 'pid', c.name 'cname', p.name 'pname' from category c left join product_ p on c.id = p.cid
+    </select>
+
+    <select id="listCategoryByName" parameterType="string" resultType="Category">
+        select * from category where name like concat('%',#{0},'%')
+    </select>
+
+    <select id="listCategoryByIdAndName" parameterType="map" resultType="Category">
+        select * from category where id>#{id} and name like concat('%',#{name},'%')
+    </select>
+
+    <!--增-->
+    <insert id="addCategory" parameterType="Category">
+        insert into category (name) values (#{name})
+    </insert>
+
+    <!--删-->
+    <delete id="deleteCategory" parameterType="Category">
+        delete from category where id=#{id}
+    </delete>
+
+    <!--改-->
+    <update id="updateCategory" parameterType="Category">
+        update category set name=#{name} where id=#{id}
+    </update>
+</mapper>

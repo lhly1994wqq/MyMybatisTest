@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mybatistest.pojo">
+    <resultMap type="Product" id="productBean" >
+        <id column="pid" property="id" />
+        <result column="pname" property="name" />
+        <result column="price" property="price"/>
+
+        <association property="category" javaType="Category">
+            <id column="cid" property="id" />
+            <result column="cname" property="name" />
+        </association>
+    </resultMap>
+
+    <select id="listProduct" resultMap="productBean">
+        select c.*, p.*, c.id 'cid', p.id 'pid', c.name 'cname', p.name 'pname' from category c left join product_ p on c.id = p.cid
+    </select>
+
+    <select id="getProduct" resultType="Product">
+        select * from product_
+        <where>
+            <if test="name!=null">
+                where name like concat('%',#{name},'%')
+            </if>
+            <if test="price!=null and price!=0">
+                and price > #{price}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateProduct" parameterType="Product">
+        update product_
+        <set>
+            <if test="name!=null">name=#{name}</if>
+            <if test="price!=null">price=#{price}</if>
+        </set>
+    </update>
+</mapper>
